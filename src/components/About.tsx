@@ -168,7 +168,7 @@ export default function About() {
 
                 <motion.div style={{ y: imageY, scale: imageScale }} className="relative w-full h-full">
                   <Image
-                    src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=800&auto=format&fit=crop"
+                    src="/about-photo.png"
                     alt="Sophia Chen - Luxury Real Estate Specialist"
                     fill
                     className="object-cover object-top"
@@ -196,7 +196,7 @@ export default function About() {
                 <p className="text-charcoal text-sm leading-relaxed">
                   Top 1% Vancouver
                 </p>
-                <p className="text-gold text-[10px] mt-1">2015 — 2024</p>
+                <p className="text-gold text-[10px] mt-1">2015 - 2024</p>
               </motion.div>
             </motion.div>
           </div>
@@ -234,7 +234,7 @@ export default function About() {
               className="relative mb-8 pl-5 border-l border-gold/40"
             >
               <p className="text-charcoal/70 text-base md:text-lg leading-relaxed italic">
-                "I don't just sell homes — I help people find where their next chapter begins."
+                "I don't just sell homes - I help people find where their next chapter begins."
               </p>
             </motion.div>
 
@@ -246,7 +246,7 @@ export default function About() {
               className="text-charcoal/60 text-base md:text-lg leading-relaxed mb-8"
             >
               With over 15 years navigating Vancouver's luxury market, I've built my reputation
-              on understanding that a home is never just a property — it's where life unfolds.
+              on understanding that a home is never just a property - it's where life unfolds.
               My background in architecture gives me an eye for the details that transform
               spaces into sanctuaries.
             </motion.p>
@@ -268,23 +268,13 @@ export default function About() {
               transition={{ duration: 0.8, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
               className="mb-12"
             >
-              <svg
-                viewBox="0 0 200 60"
-                className="w-40 md:w-48 h-auto text-charcoal"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <motion.path
-                  d="M10 45 Q 20 20, 40 35 T 70 30 Q 85 25, 95 35 Q 105 45, 115 30 Q 125 15, 140 25 Q 155 35, 170 20 L 190 25"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={isInView ? { pathLength: 1 } : {}}
-                  transition={{ duration: 1.5, delay: 1, ease: "easeOut" }}
-                />
-              </svg>
+              <Image
+                src="/meow.png"
+                alt="Sophia Chen Signature"
+                width={192}
+                height={80}
+                className="w-40 md:w-48 h-auto"
+              />
               <p className="text-charcoal/40 text-xs tracking-[0.2em] uppercase mt-2">Sophia Chen</p>
             </motion.div>
 
