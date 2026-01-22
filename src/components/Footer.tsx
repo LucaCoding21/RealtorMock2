@@ -12,42 +12,88 @@ export default function Footer() {
   return (
     <footer
       ref={footerRef}
-      className="relative py-12 md:py-16 lg:py-24 bg-background"
+      className="relative py-16 md:py-24 bg-background-dark"
     >
-      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
         {/* Main Footer Content */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12 mb-10 md:mb-16">
-          {/* Logo & Tagline */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          {/* Brand */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="text-center lg:text-left"
+            className="lg:col-span-2"
           >
-            <h2 className="heading-display text-3xl md:text-4xl text-gradient mb-3">
-              Sophia Chen
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              RIVERA<span className="text-accent">.</span>
             </h2>
-            <p className="text-white/50 text-sm uppercase tracking-widest">
-              Luxury Real Estate • Vancouver
-            </p>
-          </motion.div>
-
-          {/* Large CTA Text */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-center lg:text-right"
-          >
-            <p className="heading-display text-xl md:text-2xl text-white/20 mb-2">
-              Ready to find your
+            <p className="text-white/50 max-w-md mb-6">
+              Vancouver real estate made simple. Whether you&apos;re buying, selling, or just exploring — let&apos;s talk.
             </p>
             <a
               href="#contact"
-              className="heading-display text-xl md:text-2xl text-gold hover:text-gold-light transition-colors duration-300"
+              className="btn-primary inline-block"
             >
-              dream home? →
+              <span>Get In Touch</span>
             </a>
+          </motion.div>
+
+          {/* Quick Links */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            <h3 className="text-white font-semibold mb-6 text-sm tracking-wider uppercase">
+              Quick Links
+            </h3>
+            <ul className="space-y-4">
+              {[
+                { label: "About", href: "#about" },
+                { label: "Properties", href: "#properties" },
+                { label: "Stories", href: "#testimonials" },
+                { label: "Contact", href: "#contact" },
+              ].map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    className="text-white/50 hover:text-accent transition-colors duration-300"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Contact */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <h3 className="text-white font-semibold mb-6 text-sm tracking-wider uppercase">
+              Contact
+            </h3>
+            <ul className="space-y-4">
+              <li>
+                <a
+                  href="mailto:hello@rivera.ca"
+                  className="text-white/50 hover:text-accent transition-colors duration-300"
+                >
+                  hello@rivera.ca
+                </a>
+              </li>
+              <li>
+                <a
+                  href="tel:+16045550123"
+                  className="text-white/50 hover:text-accent transition-colors duration-300"
+                >
+                  +1 (604) 555-0123
+                </a>
+              </li>
+              <li className="text-white/50">Vancouver, BC</li>
+            </ul>
           </motion.div>
         </div>
 
@@ -66,39 +112,39 @@ export default function Footer() {
             animate={isInView ? { opacity: 1 } : {}}
             transition={{ delay: 0.6, duration: 0.6 }}
           >
-            © {currentYear} Sophia Chen Realty. All rights reserved.
+            © {currentYear} Alex Rivera Real Estate. All rights reserved.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : {}}
             transition={{ delay: 0.7, duration: 0.6 }}
-            className="flex items-center gap-4 md:gap-8 flex-wrap justify-center"
+            className="flex items-center gap-6"
           >
-            <a href="#" className="hover:text-gold transition-colors duration-300">
-              Privacy Policy
-            </a>
-            <a href="#" className="hover:text-gold transition-colors duration-300">
-              Terms of Service
-            </a>
-            <a href="#" className="hover:text-gold transition-colors duration-300">
-              Sitemap
-            </a>
+            {["Instagram", "LinkedIn", "Twitter"].map((social) => (
+              <a
+                key={social}
+                href="#"
+                className="hover:text-accent transition-colors duration-300"
+              >
+                {social}
+              </a>
+            ))}
           </motion.div>
         </div>
-
-        {/* Decorative Background Text */}
-        <div className="absolute bottom-0 left-0 right-0 overflow-hidden pointer-events-none">
-          <motion.p
-            initial={{ opacity: 0, y: 100 }}
-            animate={isInView ? { opacity: 0.02, y: 0 } : {}}
-            transition={{ delay: 0.5, duration: 1 }}
-            className="heading-display text-[15vw] leading-none text-white whitespace-nowrap"
-          >
-            VANCOUVER
-          </motion.p>
-        </div>
       </div>
+
+      {/* Background Decoration */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.5, duration: 1 }}
+        className="absolute bottom-0 left-0 right-0 overflow-hidden pointer-events-none"
+      >
+        <p className="heading-section-bg text-white/[0.02] whitespace-nowrap translate-y-1/3">
+          RIVERA
+        </p>
+      </motion.div>
     </footer>
   );
 }

@@ -1,36 +1,31 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
+import CustomCursor from "@/components/CustomCursor";
 
-const inter = Inter({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-playfair",
+  variable: "--font-jakarta",
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
-  title: "Sophia Chen | Luxury Real Estate Vancouver",
+  title: "Alex Rivera | Real Estate Vancouver",
   description:
-    "Vancouver's premier luxury real estate specialist. Curating exceptional living spaces in Coal Harbour, West Vancouver, and beyond. 15+ years of excellence.",
+    "Vancouver real estate made simple. Find your next home with a realtor who actually gets it.",
   keywords: [
-    "luxury real estate vancouver",
+    "vancouver real estate",
     "vancouver realtor",
-    "coal harbour homes",
-    "west vancouver real estate",
-    "luxury homes",
-    "penthouse vancouver",
+    "homes for sale vancouver",
+    "buy house vancouver",
+    "real estate agent",
   ],
   openGraph: {
-    title: "Sophia Chen | Luxury Real Estate Vancouver",
+    title: "Alex Rivera | Real Estate Vancouver",
     description:
-      "Vancouver's premier luxury real estate specialist. Curating exceptional living spaces.",
+      "Vancouver real estate made simple. Find your next home with a realtor who actually gets it.",
     type: "website",
     locale: "en_CA",
   },
@@ -42,9 +37,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
-      <body className="antialiased noise-overlay">
+    <html lang="en" className={jakarta.variable}>
+      <body className="antialiased">
         <SmoothScrollProvider>
+          <CustomCursor />
           {children}
         </SmoothScrollProvider>
       </body>

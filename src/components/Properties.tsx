@@ -1,131 +1,160 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
-import { motion, useInView, AnimatePresence } from "framer-motion";
-import TextReveal from "./TextReveal";
-import AnimatedText from "./AnimatedText";
-import MagneticButton from "./MagneticButton";
+import { motion, useInView } from "framer-motion";
 
 const properties = [
   {
     id: 1,
-    title: "Coal Harbour Penthouse",
-    address: "1600 Coal Harbour Quay, Vancouver",
-    price: "$12,800,000",
-    beds: 4,
-    baths: 5,
-    sqft: "4,200",
-    image:
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075&auto=format&fit=crop",
-    featured: true,
+    title: "Modern Downtown Condo",
+    address: "1200 West Georgia St, Vancouver",
+    price: "$899,000",
+    beds: 2,
+    baths: 2,
+    sqft: "1,100",
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075&auto=format&fit=crop",
+    status: "Just Listed",
   },
   {
     id: 2,
-    title: "West Van Modern Estate",
-    address: "2850 Bellevue Avenue, West Vancouver",
-    price: "$18,500,000",
-    beds: 6,
-    baths: 8,
-    sqft: "8,500",
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
-    featured: true,
+    title: "Kitsilano Family Home",
+    address: "2450 York Avenue, Vancouver",
+    price: "$1,850,000",
+    beds: 4,
+    baths: 3,
+    sqft: "2,400",
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
+    status: "Available",
   },
   {
     id: 3,
-    title: "Yaletown Luxury Loft",
-    address: "1155 Mainland Street, Vancouver",
-    price: "$3,950,000",
-    beds: 2,
+    title: "Mount Pleasant Townhouse",
+    address: "155 East 12th Avenue, Vancouver",
+    price: "$1,250,000",
+    beds: 3,
     baths: 2,
-    sqft: "1,800",
-    image:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2053&auto=format&fit=crop",
-    featured: false,
+    sqft: "1,650",
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2053&auto=format&fit=crop",
+    status: "Available",
   },
   {
     id: 4,
-    title: "Shaughnessy Heritage Manor",
-    address: "1489 McRae Avenue, Vancouver",
-    price: "$24,900,000",
-    beds: 7,
-    baths: 9,
-    sqft: "12,000",
-    image:
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop",
-    featured: true,
+    title: "North Van with Views",
+    address: "890 Mountain Highway, North Vancouver",
+    price: "$2,100,000",
+    beds: 5,
+    baths: 4,
+    sqft: "3,200",
+    image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop",
+    status: "Just Listed",
+  },
+  {
+    id: 5,
+    title: "Yaletown Loft",
+    address: "1155 Mainland Street, Vancouver",
+    price: "$750,000",
+    beds: 1,
+    baths: 1,
+    sqft: "850",
+    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop",
+    status: "Available",
   },
 ];
 
 export default function Properties() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-10%" });
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isHeaderInView = useInView(headerRef, { once: true, margin: "-10%" });
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = container;
+      const progress = scrollLeft / (scrollWidth - clientWidth);
+      setScrollProgress(progress);
+    };
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <section
-      ref={sectionRef}
       id="properties"
-      className="relative py-16 md:py-24 lg:py-32 bg-charcoal overflow-hidden"
+      className="relative py-24 md:py-32 bg-background overflow-hidden"
     >
-      <div className="relative max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-10 md:mb-16 gap-6">
-          <div>
-            <TextReveal delay={0.2}>
-              <p className="text-gold text-sm font-medium tracking-[0.3em] uppercase mb-6">
-                Featured Listings
-              </p>
-            </TextReveal>
+      {/* Background Section Label */}
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={isHeaderInView ? { opacity: 0.03 } : {}}
+        transition={{ duration: 1 }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 heading-section-bg text-foreground whitespace-nowrap select-none pointer-events-none"
+      >
+        PROPERTIES
+      </motion.span>
 
-            <div>
-              <AnimatedText
-                text="Exceptional Properties"
-                className="heading-display heading-md text-white"
-                delay={0.3}
-              />
-              <AnimatedText
-                text="For Exceptional Living"
-                className="heading-display heading-md text-gradient"
-                delay={0.5}
-              />
-            </div>
-          </div>
+      {/* Header */}
+      <div ref={headerRef} className="relative z-10 px-6 md:px-12 mb-12">
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="text-accent text-sm font-semibold tracking-[0.2em] uppercase mb-4"
+        >
+          On The Market Now
+        </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.7, duration: 0.6 }}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 md:gap-6">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="heading-lg text-foreground"
           >
-            <MagneticButton variant="secondary">View All Properties</MagneticButton>
-          </motion.div>
-        </div>
+            Find Your <span className="text-accent">Next Home</span>
+          </motion.h2>
 
-        {/* Properties Grid */}
-        <div className="grid md:grid-cols-2 gap-6 md:gap-10">
+          <motion.a
+            href="#contact"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="btn-outline self-start md:self-auto"
+          >
+            <span>View All Listings</span>
+          </motion.a>
+        </div>
+      </div>
+
+      {/* Horizontal Scroll Gallery */}
+      <div className="relative">
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-6 md:gap-10 px-6 md:px-12 overflow-x-auto scrollbar-hide pb-4"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
           {properties.map((property, index) => (
             <motion.article
               key={property.id}
               initial={{ opacity: 0, y: 50 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
               transition={{
-                delay: 0.4 + index * 0.15,
                 duration: 0.8,
+                delay: 0.4 + index * 0.1,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              onMouseEnter={() => setHoveredId(property.id)}
-              onMouseLeave={() => setHoveredId(null)}
-              className={`group relative cursor-pointer ${
-                property.featured ? "md:col-span-1" : ""
-              }`}
+              whileHover={{ y: -8 }}
+              className="group relative flex-shrink-0 w-[280px] md:w-[380px] cursor-pointer"
+              data-cursor="View"
             >
               {/* Image Container */}
-              <div className="relative aspect-[4/3] overflow-hidden mb-6">
+              <div className="relative aspect-[4/5] overflow-hidden mb-4 shadow-lg group-hover:shadow-xl transition-shadow duration-500">
                 <motion.div
-                  animate={{
-                    scale: hoveredId === property.id ? 1.05 : 1,
-                  }}
+                  whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                   className="absolute inset-0"
                 >
@@ -134,97 +163,81 @@ export default function Properties() {
                     alt={property.title}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
+                    sizes="400px"
                   />
                 </motion.div>
 
-                {/* Overlay */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: hoveredId === property.id ? 1 : 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"
-                />
+                {/* Hover Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                {/* Featured Badge */}
-                {property.featured && (
-                  <div className="absolute top-6 left-6 px-4 py-2 bg-gold text-background text-xs font-medium tracking-wider uppercase">
-                    Featured
-                  </div>
-                )}
+                {/* Status Badge */}
+                <div className="absolute top-4 left-4">
+                  <span className="px-4 py-2 bg-accent text-white text-xs font-semibold tracking-wider uppercase">
+                    {property.status}
+                  </span>
+                </div>
 
                 {/* Quick Info on Hover */}
-                <AnimatePresence>
-                  {hoveredId === property.id && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 20 }}
-                      transition={{ duration: 0.3 }}
-                      className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-white"
-                    >
-                      <div className="flex items-center gap-6 text-sm">
-                        <span>{property.beds} Beds</span>
-                        <span>{property.baths} Baths</span>
-                        <span>{property.sqft} Sqft</span>
-                      </div>
-                      <motion.div
-                        initial={{ x: -10, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: 0.1 }}
-                        className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center"
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                          />
-                        </svg>
-                      </motion.div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Image Reveal Overlay */}
                 <motion.div
-                  initial={{ scaleX: 1 }}
-                  animate={isInView ? { scaleX: 0 } : {}}
-                  transition={{
-                    delay: 0.4 + index * 0.15,
-                    duration: 1.2,
-                    ease: [0.85, 0, 0.15, 1],
-                  }}
-                  className="absolute inset-0 bg-charcoal origin-right z-10"
-                />
+                  initial={{ opacity: 0, y: 20 }}
+                  whileHover={{ opacity: 1, y: 0 }}
+                  className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-500"
+                >
+                  <div className="flex items-center gap-4 text-white text-sm">
+                    <span>{property.beds} Beds</span>
+                    <span className="w-1 h-1 bg-white/50 rounded-full" />
+                    <span>{property.baths} Baths</span>
+                    <span className="w-1 h-1 bg-white/50 rounded-full" />
+                    <span>{property.sqft} Sqft</span>
+                  </div>
+                </motion.div>
               </div>
 
               {/* Content */}
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
-                <div>
-                  <h3 className="heading-display text-lg md:text-xl text-white mb-1 group-hover:text-gold transition-colors duration-300">
+              <div className="space-y-2">
+                <div className="flex items-start justify-between gap-4">
+                  <h3 className="text-lg md:text-xl font-bold text-foreground group-hover:text-accent transition-colors duration-300">
                     {property.title}
                   </h3>
-                  <p className="text-xs md:text-sm text-white/50">{property.address}</p>
+                  <p className="text-accent font-bold text-lg whitespace-nowrap">
+                    {property.price}
+                  </p>
                 </div>
-                <p className="text-gold font-medium text-base md:text-lg">
-                  {property.price}
-                </p>
+                <p className="text-muted text-sm">{property.address}</p>
               </div>
             </motion.article>
           ))}
+
+          {/* Final CTA Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.9 }}
+            className="flex-shrink-0 w-[280px] md:w-[380px] aspect-[4/5] flex items-center justify-center bg-background-dark"
+          >
+            <div className="text-center px-8">
+              <h3 className="heading-md text-white mb-6">
+                Don&apos;t see
+                <br />
+                what you&apos;re
+                <br />
+                looking for?
+              </h3>
+              <a href="#contact" className="btn-primary">
+                <span>Let&apos;s Talk</span>
+              </a>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Scroll Progress Bar */}
+        <div className="mt-8 mx-6 md:mx-12 h-0.5 bg-foreground/10">
+          <motion.div
+            className="h-full bg-accent origin-left"
+            style={{ scaleX: scrollProgress }}
+          />
         </div>
       </div>
-
-      {/* Decorative Elements */}
-      <div className="absolute top-1/4 -left-32 w-64 h-64 border border-gold/10 rounded-full" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 border border-gold/10 rounded-full" />
     </section>
   );
 }

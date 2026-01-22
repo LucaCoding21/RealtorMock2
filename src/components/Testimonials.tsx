@@ -3,39 +3,31 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import TextReveal from "./TextReveal";
-import AnimatedText from "./AnimatedText";
 
 const testimonials = [
   {
     id: 1,
     quote:
-      "Sophia's understanding of the luxury market is unparalleled. She found us our dream home in Coal Harbour within weeks of our initial meeting. Her discretion and professionalism made the entire process seamless.",
-    author: "Michael & Sarah Chen",
-    role: "Tech Executives",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1287&auto=format&fit=crop",
-    property: "Purchased $8.5M Penthouse",
+      "Alex made buying our first home feel effortless. He explained every step without making us feel dumb, and found us a place we actually love within our budget.",
+    author: "Sarah & Mike Chen",
+    role: "First-time buyers",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1287&auto=format&fit=crop",
   },
   {
     id: 2,
     quote:
-      "Working with Sophia was a revelation. Her architectural background meant she saw potential in properties that others overlooked. She helped us secure a heritage home that we've transformed into our family's sanctuary.",
-    author: "The Richardson Family",
-    role: "Private Investors",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1170&auto=format&fit=crop",
-    property: "Purchased $15M Estate",
+      "Sold our house in 2 weeks, $40K over asking. Alex's marketing strategy was next level. Other agents we talked to just wanted to list and wait.",
+    author: "The Martinez Family",
+    role: "Sellers",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1170&auto=format&fit=crop",
   },
   {
     id: 3,
     quote:
-      "Sophia's network and reputation opened doors that would have been impossible otherwise. Her negotiation skills saved us over $2 million on our purchase. She's not just a realtor — she's a trusted advisor.",
-    author: "Dr. Amanda Liu",
-    role: "Surgeon & Art Collector",
-    image:
-      "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1361&auto=format&fit=crop",
-    property: "Purchased $6.2M Loft",
+      "I was relocating from Toronto and Alex did everything remotely. Virtual tours, negotiations, inspections — he handled it all. Moved into a great place sight unseen.",
+    author: "David Park",
+    role: "Relocation buyer",
+    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1361&auto=format&fit=crop",
   },
 ];
 
@@ -46,139 +38,151 @@ export default function Testimonials() {
 
   const activeTestimonial = testimonials[activeIndex];
 
+  const nextTestimonial = () => {
+    setActiveIndex((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const prevTestimonial = () => {
+    setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
+
   return (
     <section
       ref={sectionRef}
       id="testimonials"
-      className="relative py-16 md:py-24 lg:py-32 bg-background overflow-hidden"
+      className="relative py-24 md:py-32 lg:py-40 bg-background-dark overflow-hidden"
     >
-      <div className="relative max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20">
-        {/* Header */}
-        <div className="text-center mb-10 md:mb-16">
-          <TextReveal delay={0.2}>
-            <p className="text-gold text-sm font-medium tracking-[0.3em] uppercase mb-6">
-              Client Stories
-            </p>
-          </TextReveal>
+      {/* Background Section Label */}
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 0.03 } : {}}
+        transition={{ duration: 1 }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 heading-section-bg text-white whitespace-nowrap select-none pointer-events-none"
+      >
+        STORIES
+      </motion.span>
 
-          <div>
-            <AnimatedText
-              text="Trusted by Vancouver's"
-              className="heading-display heading-md text-white"
-              delay={0.3}
-            />
-            <AnimatedText
-              text="Most Discerning Clients"
-              className="heading-display heading-md text-gradient"
-              delay={0.5}
-            />
-          </div>
+      <div className="relative max-w-[1400px] mx-auto px-6 md:px-12">
+        {/* Header */}
+        <div className="text-center mb-16 md:mb-24">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="text-accent text-sm font-semibold tracking-[0.2em] uppercase mb-4"
+          >
+            Don&apos;t Take My Word For It
+          </motion.p>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="heading-xl text-white"
+          >
+            Real clients,
+            <br />
+            <span className="text-accent">real results.</span>
+          </motion.h2>
         </div>
 
         {/* Testimonial Content */}
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          {/* Quote Side */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="relative"
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTestimonial.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
-                className="testimonial-quote"
-              >
-                <blockquote className="body-large text-white/80 mb-12 leading-relaxed">
-                  {activeTestimonial.quote}
-                </blockquote>
+        <div className="max-w-4xl mx-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTestimonial.id}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.5 }}
+              className="text-center"
+            >
+              {/* Quote */}
+              <blockquote className="text-2xl md:text-3xl lg:text-4xl font-medium text-white leading-relaxed mb-12">
+                &ldquo;{activeTestimonial.quote}&rdquo;
+              </blockquote>
 
-                <div className="flex items-center gap-4 md:gap-6">
-                  <div className="relative w-16 h-16 rounded-full overflow-hidden">
-                    <Image
-                      src={activeTestimonial.image}
-                      alt={activeTestimonial.author}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div>
-                    <p className="text-white font-medium text-lg">
-                      {activeTestimonial.author}
-                    </p>
-                    <p className="text-white/50 text-sm">
-                      {activeTestimonial.role}
-                    </p>
-                    <p className="text-gold text-sm mt-1">
-                      {activeTestimonial.property}
-                    </p>
-                  </div>
+              {/* Author */}
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative w-16 h-16 rounded-full overflow-hidden ring-2 ring-accent ring-offset-4 ring-offset-background-dark">
+                  <Image
+                    src={activeTestimonial.image}
+                    alt={activeTestimonial.author}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
-              </motion.div>
-            </AnimatePresence>
+                <div>
+                  <p className="text-white font-semibold text-lg">
+                    {activeTestimonial.author}
+                  </p>
+                  <p className="text-white/50 text-sm">
+                    {activeTestimonial.role}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
 
-            {/* Navigation Dots */}
-            <div className="flex items-center gap-3 mt-12">
+          {/* Navigation */}
+          <div className="flex items-center justify-center gap-6 md:gap-8 mt-16">
+            {/* Prev Button */}
+            <button
+              onClick={prevTestimonial}
+              className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:border-accent hover:text-accent focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 transition-all duration-300 text-white"
+              aria-label="Previous testimonial"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+
+            {/* Dots */}
+            <div className="flex items-center gap-2">
               {testimonials.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setActiveIndex(index)}
-                  className="group relative w-12 h-12 flex items-center justify-center"
+                  className={`h-3 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${
+                    index === activeIndex
+                      ? "bg-accent w-8"
+                      : "bg-white/20 hover:bg-white/40 w-3"
+                  }`}
                   aria-label={`Go to testimonial ${index + 1}`}
-                >
-                  <span
-                    className={`block w-2 h-2 rounded-full transition-all duration-300 ${
-                      index === activeIndex
-                        ? "bg-gold scale-125"
-                        : "bg-white/20 group-hover:bg-white/40"
-                    }`}
-                  />
-                </button>
+                  aria-current={index === activeIndex ? "true" : undefined}
+                />
               ))}
             </div>
-          </motion.div>
 
-          {/* Image Side */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.8, duration: 0.8 }}
-            className="relative hidden lg:block"
-          >
-            <div className="relative aspect-square">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTestimonial.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.05 }}
-                  transition={{ duration: 0.5 }}
-                  className="absolute inset-0"
-                >
-                  <Image
-                    src={
-                      activeIndex === 0
-                        ? "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2053&auto=format&fit=crop"
-                        : activeIndex === 1
-                        ? "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop"
-                        : "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075&auto=format&fit=crop"
-                    }
-                    alt="Property"
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Decorative Frame */}
-              <div className="absolute -inset-6 border border-gold/20 pointer-events-none" />
-            </div>
-          </motion.div>
+            {/* Next Button */}
+            <button
+              onClick={nextTestimonial}
+              className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:border-accent hover:text-accent focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 transition-all duration-300 text-white"
+              aria-label="Next testimonial"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>

@@ -1,22 +1,20 @@
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
-import Marquee from "@/components/Marquee";
 import Properties from "@/components/Properties";
 import Testimonials from "@/components/Testimonials";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import Preloader from "@/components/Preloader";
+import Loader from "@/components/Loader";
 
 export default function Home() {
   return (
     <>
-      <Preloader />
+      <Loader />
       <main className="relative">
         <Navigation />
         <Hero />
         <About />
-        <Marquee />
         <Properties />
         <Testimonials />
         <Contact />

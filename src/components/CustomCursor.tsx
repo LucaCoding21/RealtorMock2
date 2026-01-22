@@ -1,85 +1,115 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, useSpring, useMotionValue } from "framer-motion";
 
 export default function CustomCursor() {
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [cursorText, setCursorText] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
+  const cursorRef = useRef<HTMLDivElement>(null);
 
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  const springConfig = { damping: 25, stiffness: 300 };
+  const springConfig = { damping: 25, stiffness: 400 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
   useEffect(() => {
+    // Check if it's a touch device
+    const isTouchDevice = window.matchMedia("(hover: none)").matches;
+    if (isTouchDevice) return;
+
+    setIsVisible(true);
+
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
-      setIsVisible(true);
     };
 
-    const handleMouseEnter = () => {
-      setIsHovering(true);
-    };
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
 
-    const handleMouseLeave = () => {
-      setIsHovering(false);
+      // Check for data-cursor attribute
+      const cursorAttr = target.closest("[data-cursor]");
+      if (cursorAttr) {
+        const text = cursorAttr.getAttribute("data-cursor");
+        setCursorText(text || "");
+        setIsExpanded(true);
+        return;
+      }
+
+      // Check for interactive elements
+      const isInteractive =
+        target.closest("a") ||
+        target.closest("button") ||
+        target.closest("[role='button']") ||
+        target.closest("input") ||
+        target.closest("textarea");
+
+      if (isInteractive) {
+        setIsExpanded(true);
+      } else {
+        setCursorText("");
+        setIsExpanded(false);
+      }
     };
 
     window.addEventListener("mousemove", moveCursor);
-
-    const interactiveElements = document.querySelectorAll(
-      'a, button, [data-cursor-hover], input, textarea'
-    );
-    interactiveElements.forEach((el) => {
-      el.addEventListener("mouseenter", handleMouseEnter);
-      el.addEventListener("mouseleave", handleMouseLeave);
-    });
+    document.addEventListener("mouseover", handleMouseOver);
 
     return () => {
       window.removeEventListener("mousemove", moveCursor);
-      interactiveElements.forEach((el) => {
-        el.removeEventListener("mouseenter", handleMouseEnter);
-        el.removeEventListener("mouseleave", handleMouseLeave);
-      });
+      document.removeEventListener("mouseover", handleMouseOver);
     };
   }, [cursorX, cursorY]);
 
-  // Hide on touch devices
-  if (typeof window !== "undefined" && "ontouchstart" in window) {
-    return null;
-  }
+  if (!isVisible) return null;
 
   return (
-    <motion.div
-      ref={cursorRef}
-      className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference hidden md:block"
-      style={{
-        x: cursorXSpring,
-        y: cursorYSpring,
-      }}
-    >
+    <>
+      {/* Main cursor dot */}
       <motion.div
-        className="relative -translate-x-1/2 -translate-y-1/2"
-        animate={{
-          width: isHovering ? 60 : 20,
-          height: isHovering ? 60 : 20,
-          opacity: isVisible ? 1 : 0,
+        ref={cursorRef}
+        className="pointer-events-none fixed top-0 left-0 z-[9998] rounded-full hidden md:block"
+        style={{
+          x: cursorXSpring,
+          y: cursorYSpring,
+          translateX: "-50%",
+          translateY: "-50%",
         }}
-        transition={{ duration: 0.2 }}
-      >
-        <div
-          className={`w-full h-full rounded-full border transition-all duration-300 ${
-            isHovering
-              ? "border-white bg-white/10"
-              : "border-white"
-          }`}
-        />
-      </motion.div>
-    </motion.div>
+        animate={{
+          width: isExpanded ? 80 : 12,
+          height: isExpanded ? 80 : 12,
+          backgroundColor: isExpanded ? "rgba(255, 107, 74, 0.9)" : "#FF6B4A",
+          mixBlendMode: isExpanded ? "normal" : "difference",
+        }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      />
+
+      {/* Cursor text */}
+      {cursorText && (
+        <motion.div
+          className="pointer-events-none fixed top-0 left-0 z-[9998] flex items-center justify-center hidden md:flex"
+          style={{
+            x: cursorXSpring,
+            y: cursorYSpring,
+            translateX: "-50%",
+            translateY: "-50%",
+            width: 80,
+            height: 80,
+          }}
+          animate={{
+            opacity: cursorText ? 1 : 0,
+          }}
+          transition={{ duration: 0.2 }}
+        >
+          <span className="text-white text-xs font-semibold tracking-wider uppercase">
+            {cursorText}
+          </span>
+        </motion.div>
+      )}
+    </>
   );
 }
