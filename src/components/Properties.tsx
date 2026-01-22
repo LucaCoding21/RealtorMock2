@@ -274,6 +274,28 @@ export default function Properties() {
             />
           ))}
         </div>
+
+        {/* Desktop scroll indicator dots */}
+        <div className="hidden md:flex justify-center gap-2 mt-6">
+          {properties.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                const container = scrollContainerRef.current;
+                if (container) {
+                  const cardWidth = container.scrollWidth / (properties.length + 1);
+                  container.scrollTo({ left: cardWidth * index, behavior: "smooth" });
+                }
+              }}
+              className={`h-2 rounded-full transition-all duration-300 hover:bg-accent/50 ${
+                Math.round(scrollProgress * properties.length) === index
+                  ? "w-8 bg-accent"
+                  : "w-2 bg-foreground/20"
+              }`}
+              aria-label={`Go to property ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

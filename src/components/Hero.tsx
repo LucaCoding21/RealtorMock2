@@ -111,12 +111,12 @@ export default function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[150vh] md:h-[200vh]"
+      className="relative h-[100svh] md:h-[200vh]"
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div className="md:sticky md:top-0 h-[100svh] md:h-screen w-full overflow-hidden">
         {/* Video Background */}
         <motion.div
-          style={{ y: isMobile ? 0 : parallaxY }}
+          style={{ y: parallaxY }}
           className="absolute inset-0 w-full h-full"
         >
           <video

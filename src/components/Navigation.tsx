@@ -116,7 +116,7 @@ export default function Navigation() {
                   e.preventDefault();
                   scrollToSection("#contact");
                 }}
-                className="hidden lg:block btn-primary text-sm py-3 px-6"
+                className="!hidden lg:!block btn-primary text-sm py-3 px-6"
               >
                 <span>Let&apos;s Talk</span>
               </a>
