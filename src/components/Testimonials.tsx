@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import Image from "next/image";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView, AnimatePresence, useReducedMotion, PanInfo } from "framer-motion";
 
 const testimonials = [
   {
@@ -35,41 +35,73 @@ export default function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-10%" });
   const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
 
   const activeTestimonial = testimonials[activeIndex];
 
-  const nextTestimonial = () => {
-    setActiveIndex((prev) => (prev + 1) % testimonials.length);
+  const paginate = useCallback((newDirection: number) => {
+    setDirection(newDirection);
+    setActiveIndex((prev) => {
+      if (newDirection === 1) {
+        return (prev + 1) % testimonials.length;
+      }
+      return (prev - 1 + testimonials.length) % testimonials.length;
+    });
+  }, []);
+
+  const nextTestimonial = useCallback(() => paginate(1), [paginate]);
+  const prevTestimonial = useCallback(() => paginate(-1), [paginate]);
+
+  // Swipe handlers for mobile
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const swipeThreshold = 50;
+    if (info.offset.x > swipeThreshold) {
+      prevTestimonial();
+    } else if (info.offset.x < -swipeThreshold) {
+      nextTestimonial();
+    }
   };
 
-  const prevTestimonial = () => {
-    setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 100 : -100,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? 100 : -100,
+      opacity: 0,
+    }),
   };
 
   return (
     <section
       ref={sectionRef}
       id="testimonials"
-      className="relative py-24 md:py-32 lg:py-40 bg-background-dark overflow-hidden"
+      className="relative py-16 sm:py-20 md:py-28 lg:py-40 bg-background-dark overflow-hidden"
     >
       {/* Background Section Label */}
       <motion.span
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 0.03 } : {}}
         transition={{ duration: 1 }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 heading-section-bg text-white whitespace-nowrap select-none pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 heading-section-bg text-white whitespace-nowrap select-none pointer-events-none hidden sm:block"
       >
         STORIES
       </motion.span>
 
-      <div className="relative max-w-[1400px] mx-auto px-6 md:px-12">
+      <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12">
         {/* Header */}
-        <div className="text-center mb-16 md:mb-24">
+        <div className="text-center mb-10 sm:mb-14 md:mb-20 lg:mb-24">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="text-accent text-sm font-semibold tracking-[0.2em] uppercase mb-4"
+            className="text-accent text-xs sm:text-sm font-semibold tracking-[0.15em] sm:tracking-[0.2em] uppercase mb-3 sm:mb-4"
           >
             Don&apos;t Take My Word For It
           </motion.p>
@@ -88,35 +120,45 @@ export default function Testimonials() {
 
         {/* Testimonial Content */}
         <div className="max-w-4xl mx-auto">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={activeTestimonial.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.5 }}
-              className="text-center"
+              custom={direction}
+              variants={prefersReducedMotion ? {} : slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 },
+              }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.2}
+              onDragEnd={handleDragEnd}
+              className="text-center cursor-grab active:cursor-grabbing touch-pan-y"
             >
               {/* Quote */}
-              <blockquote className="text-2xl md:text-3xl lg:text-4xl font-medium text-white leading-relaxed mb-12">
+              <blockquote className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-white leading-relaxed mb-8 sm:mb-10 md:mb-12 px-2">
                 &ldquo;{activeTestimonial.quote}&rdquo;
               </blockquote>
 
               {/* Author */}
-              <div className="flex flex-col items-center gap-4">
-                <div className="relative w-16 h-16 rounded-full overflow-hidden ring-2 ring-accent ring-offset-4 ring-offset-background-dark">
+              <div className="flex flex-col items-center gap-3 sm:gap-4">
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden ring-2 ring-accent ring-offset-2 sm:ring-offset-4 ring-offset-background-dark">
                   <Image
                     src={activeTestimonial.image}
                     alt={activeTestimonial.author}
                     fill
                     className="object-cover"
+                    sizes="64px"
                   />
                 </div>
                 <div>
-                  <p className="text-white font-semibold text-lg">
+                  <p className="text-white font-semibold text-base sm:text-lg">
                     {activeTestimonial.author}
                   </p>
-                  <p className="text-white/50 text-sm">
+                  <p className="text-white/50 text-xs sm:text-sm">
                     {activeTestimonial.role}
                   </p>
                 </div>
@@ -125,64 +167,83 @@ export default function Testimonials() {
           </AnimatePresence>
 
           {/* Navigation */}
-          <div className="flex items-center justify-center gap-6 md:gap-8 mt-16">
+          <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 mt-10 sm:mt-12 md:mt-16">
             {/* Prev Button */}
             <button
               onClick={prevTestimonial}
-              className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:border-accent hover:text-accent focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 transition-all duration-300 text-white"
+              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-white/20 flex items-center justify-center hover:border-accent hover:text-accent active:border-accent active:text-accent active:scale-95 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 transition-all duration-300 text-white touch-target"
               aria-label="Previous testimonial"
             >
               <svg
-                width="20"
-                height="20"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="sm:w-5 sm:h-5"
               >
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
 
-            {/* Dots */}
-            <div className="flex items-center gap-2">
+            {/* Dots - Larger touch targets */}
+            <div className="flex items-center gap-2 sm:gap-3">
               {testimonials.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => setActiveIndex(index)}
-                  className={`h-3 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${
-                    index === activeIndex
-                      ? "bg-accent w-8"
-                      : "bg-white/20 hover:bg-white/40 w-3"
-                  }`}
+                  onClick={() => {
+                    setDirection(index > activeIndex ? 1 : -1);
+                    setActiveIndex(index);
+                  }}
+                  className={`h-10 sm:h-11 flex items-center justify-center transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded-full px-1`}
                   aria-label={`Go to testimonial ${index + 1}`}
                   aria-current={index === activeIndex ? "true" : undefined}
-                />
+                >
+                  <span
+                    className={`block h-2 sm:h-3 rounded-full transition-all duration-300 ${
+                      index === activeIndex
+                        ? "bg-accent w-6 sm:w-8"
+                        : "bg-white/20 hover:bg-white/40 w-2 sm:w-3"
+                    }`}
+                  />
+                </button>
               ))}
             </div>
 
             {/* Next Button */}
             <button
               onClick={nextTestimonial}
-              className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:border-accent hover:text-accent focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 transition-all duration-300 text-white"
+              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-white/20 flex items-center justify-center hover:border-accent hover:text-accent active:border-accent active:text-accent active:scale-95 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 transition-all duration-300 text-white touch-target"
               aria-label="Next testimonial"
             >
               <svg
-                width="20"
-                height="20"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="sm:w-5 sm:h-5"
               >
                 <path d="M9 18l6-6-6-6" />
               </svg>
             </button>
           </div>
+
+          {/* Swipe hint - Mobile only */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ delay: 1, duration: 0.6 }}
+            className="text-white/30 text-xs text-center mt-6 sm:hidden"
+          >
+            Swipe to see more
+          </motion.p>
         </div>
       </div>
     </section>

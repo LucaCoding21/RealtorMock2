@@ -36,7 +36,25 @@
   --font-sans: "Plus Jakarta Sans", sans-serif;
 }
 
-/* Lenis smooth scroll */
+/* ============================================
+   ACCESSIBILITY - Reduced Motion Support
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   LENIS SMOOTH SCROLL
+   ============================================ */
+
 html.lenis, html.lenis body {
   height: auto;
 }
@@ -57,9 +75,20 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-/* Base styles */
+/* Disable smooth scroll on touch devices for better input handling */
+@media (hover: none) and (pointer: coarse) {
+  html.lenis, html.lenis body {
+    scroll-behavior: auto;
+  }
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
 html {
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -77,7 +106,10 @@ body {
   color: var(--background);
 }
 
-/* Scrollbar - Minimal */
+/* ============================================
+   SCROLLBAR - Minimal
+   ============================================ */
+
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -102,7 +134,7 @@ body {
 }
 
 /* ============================================
-   TYPOGRAPHY SYSTEM - Massive & Unapologetic
+   TYPOGRAPHY SYSTEM - Mobile-First Responsive
    ============================================ */
 
 /* Display headings - The statement makers */
@@ -113,55 +145,63 @@ body {
   line-height: 0.9;
 }
 
-/* Hero text - Absolutely massive */
+/* Hero text - Scales gracefully from mobile to desktop */
 .heading-hero {
-  font-size: clamp(4rem, 20vw, 25rem);
+  font-size: clamp(2.5rem, 15vw, 20rem);
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   line-height: 0.85;
 }
 
-/* Section titles - Background texture size */
+/* Section titles - Background texture (hidden on small mobile) */
 .heading-section-bg {
-  font-size: clamp(8rem, 25vw, 20rem);
+  font-size: clamp(4rem, 20vw, 20rem);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 0.8;
 }
 
-/* XL headings */
-.heading-xl {
-  font-size: clamp(3rem, 10vw, 8rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 0.9;
+/* Hide background text on very small screens */
+@media (max-width: 480px) {
+  .heading-section-bg {
+    font-size: clamp(3rem, 18vw, 8rem);
+    opacity: 0.02 !important;
+  }
 }
 
-/* Large headings */
-.heading-lg {
-  font-size: clamp(2.5rem, 6vw, 5rem);
-  font-weight: 700;
+/* XL headings - More reasonable mobile sizes */
+.heading-xl {
+  font-size: clamp(1.75rem, 6vw, 6rem);
+  font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 0.95;
 }
 
-/* Medium headings */
-.heading-md {
-  font-size: clamp(1.75rem, 4vw, 3rem);
+/* Large headings */
+.heading-lg {
+  font-size: clamp(1.5rem, 4vw, 4rem);
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1;
 }
 
+/* Medium headings */
+.heading-md {
+  font-size: clamp(1.25rem, 3vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
 /* Body text */
 .body-large {
-  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
   line-height: 1.6;
   letter-spacing: -0.01em;
 }
 
 .body-regular {
-  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  font-size: clamp(0.9375rem, 1.25vw, 1.0625rem);
   line-height: 1.7;
 }
 
@@ -177,7 +217,7 @@ body {
 }
 
 /* ============================================
-   BUTTONS - Bold & Direct
+   BUTTONS - Bold & Direct with Touch States
    ============================================ */
 
 .btn-primary {
@@ -185,10 +225,10 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 1.25rem 2.5rem;
+  padding: 1rem 2rem;
   background: var(--accent);
   color: white;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -196,6 +236,17 @@ body {
   border-radius: 2px;
   transition: all 0.4s var(--ease-out-expo);
   cursor: pointer;
+  /* Ensure minimum touch target */
+  min-height: 48px;
+  min-width: 48px;
+}
+
+/* Larger padding on desktop */
+@media (min-width: 768px) {
+  .btn-primary {
+    padding: 1.25rem 2.5rem;
+    font-size: 0.875rem;
+  }
 }
 
 .btn-primary::before {
@@ -209,6 +260,11 @@ body {
 
 .btn-primary:hover::before {
   transform: translateY(0);
+}
+
+/* Active state for touch devices */
+.btn-primary:active {
+  transform: scale(0.98);
 }
 
 .btn-primary:focus-visible {
@@ -226,11 +282,11 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 1.25rem 2.5rem;
+  padding: 1rem 2rem;
   background: transparent;
   border: 2px solid var(--foreground);
   color: var(--foreground);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -238,6 +294,16 @@ body {
   border-radius: 2px;
   transition: all 0.4s var(--ease-out-expo);
   cursor: pointer;
+  /* Ensure minimum touch target */
+  min-height: 48px;
+  min-width: 48px;
+}
+
+@media (min-width: 768px) {
+  .btn-outline {
+    padding: 1.25rem 2.5rem;
+    font-size: 0.875rem;
+  }
 }
 
 .btn-outline::before {
@@ -257,6 +323,10 @@ body {
   transform: translateY(0);
 }
 
+.btn-outline:active {
+  transform: scale(0.98);
+}
+
 .btn-outline:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.2);
@@ -274,8 +344,14 @@ body {
 /* Fade up animation */
 .fade-up {
   opacity: 0;
-  transform: translateY(60px);
+  transform: translateY(40px);
   transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+}
+
+@media (max-width: 768px) {
+  .fade-up {
+    transform: translateY(24px);
+  }
 }
 
 .fade-up.visible {
@@ -326,7 +402,7 @@ body {
 }
 
 /* ============================================
-   CUSTOM CURSOR STYLES
+   CUSTOM CURSOR STYLES (Desktop Only)
    ============================================ */
 
 .cursor {
@@ -367,6 +443,14 @@ body {
   opacity: 1;
 }
 
+/* Hide on touch devices */
+@media (hover: none) {
+  .cursor,
+  .cursor-text {
+    display: none !important;
+  }
+}
+
 /* ============================================
    HORIZONTAL SCROLL SECTION
    ============================================ */
@@ -387,9 +471,16 @@ body {
 
 .horizontal-scroll-track {
   display: flex;
-  gap: 2rem;
-  padding: 0 4rem;
+  gap: 1rem;
+  padding: 0 1.5rem;
   will-change: transform;
+}
+
+@media (min-width: 768px) {
+  .horizontal-scroll-track {
+    gap: 2rem;
+    padding: 0 3rem;
+  }
 }
 
 /* ============================================
@@ -402,8 +493,11 @@ body {
   transition: transform 0.6s var(--ease-out-expo);
 }
 
-.property-card-3d:hover {
-  transform: translateZ(40px) rotateX(2deg);
+/* Only apply 3D on hover-capable devices */
+@media (hover: hover) {
+  .property-card-3d:hover {
+    transform: translateZ(40px) rotateX(2deg);
+  }
 }
 
 /* ============================================
@@ -426,7 +520,7 @@ body {
 }
 
 /* ============================================
-   MENU TAKEOVER
+   MENU TAKEOVER - Mobile Optimized
    ============================================ */
 
 .menu-takeover {
@@ -447,24 +541,37 @@ body {
   pointer-events: auto;
 }
 
+/* Menu links - Mobile-first sizing */
 .menu-link {
-  font-size: clamp(3rem, 12vw, 10rem);
+  font-size: clamp(2rem, 10vw, 8rem);
   font-weight: 800;
   color: var(--foreground-light);
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  opacity: 0.4;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  opacity: 0.5;
   transition: opacity 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo);
   cursor: pointer;
+  /* Ensure good touch target */
+  padding: 0.5rem 0;
+  display: block;
 }
 
-.menu-link:hover {
+/* Hover only on desktop */
+@media (hover: hover) {
+  .menu-link:hover {
+    opacity: 1;
+    color: var(--accent);
+  }
+}
+
+/* Active state for touch */
+.menu-link:active {
   opacity: 1;
   color: var(--accent);
 }
 
 /* ============================================
-   FORM STYLES
+   FORM STYLES - Touch Optimized
    ============================================ */
 
 .form-input {
@@ -476,6 +583,8 @@ body {
   color: var(--foreground);
   width: 100%;
   transition: border-color 0.4s var(--ease-out-expo), box-shadow 0.4s var(--ease-out-expo);
+  /* Minimum touch target height */
+  min-height: 48px;
 }
 
 .form-input:focus {
@@ -553,10 +662,72 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Hide on touch devices */
-@media (hover: none) {
-  .cursor,
-  .cursor-text {
-    display: none !important;
+/* ============================================
+   MOBILE UTILITY CLASSES
+   ============================================ */
+
+/* Safe area padding for notched phones */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Touch-friendly spacing */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Better text rendering on mobile */
+@media (max-width: 768px) {
+  body {
+    text-rendering: optimizeSpeed;
   }
+}
+
+/* ============================================
+   FOCUS STATES - Accessibility
+   ============================================ */
+
+/* Global focus-visible styling */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Remove default outline when focus-visible is supported */
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================
+   SCROLL HINT ANIMATION - Mobile
+   ============================================ */
+
+.scroll-hint {
+  position: relative;
+}
+
+.scroll-hint::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  background: linear-gradient(to right, transparent, var(--background));
+  pointer-events: none;
+}
+
+/* Dark version */
+.scroll-hint-dark::after {
+  background: linear-gradient(to right, transparent, var(--background-dark));
 }
