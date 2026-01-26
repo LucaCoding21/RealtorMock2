@@ -38,11 +38,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={jakarta.variable}>
-      <body className="antialiased">
-        <SmoothScrollProvider>
-          <CustomCursor />
-          {children}
-        </SmoothScrollProvider>
+      <body className="antialiased overflow-x-hidden">
+        <div className="overflow-x-hidden w-full">
+          <SmoothScrollProvider>
+            <CustomCursor />
+            {children}
+          </SmoothScrollProvider>
+        </div>
       </body>
     </html>
   );
