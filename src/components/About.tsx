@@ -12,7 +12,7 @@ const stats = [
 
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-15%" });
+  const isInView = useInView(sectionRef, { once: true, margin: "0px 0px 200px 0px" });
   const prefersReducedMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
 
