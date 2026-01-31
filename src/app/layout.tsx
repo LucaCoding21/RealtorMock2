@@ -38,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={jakarta.variable}>
-      <body className="antialiased overflow-x-hidden">
+      <body className="antialiased overflow-x-clip">
         <SmoothScrollProvider>
           <CustomCursor />
           {children}
