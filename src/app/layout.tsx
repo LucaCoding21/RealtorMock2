@@ -39,12 +39,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={jakarta.variable}>
       <body className="antialiased overflow-x-hidden">
-        <div className="overflow-x-hidden w-full">
-          <SmoothScrollProvider>
-            <CustomCursor />
-            {children}
-          </SmoothScrollProvider>
-        </div>
+        <SmoothScrollProvider>
+          <CustomCursor />
+          {children}
+        </SmoothScrollProvider>
       </body>
     </html>
   );
